@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cat vs Dog Classifier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #e0eafc;
+            --card-color: rgba(255, 255, 255, 0.9);
+            --text-color: #333;
+            --accent: #4a90e2;
+        }
+
+        body.dark {
+            --bg-color: #1a1a2e;
+            --card-color: rgba(30, 30, 60, 0.95);
+            --text-color: #eee;
+            --accent: #90caf9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.4s ease;
+        }
+
+        .container {
+            background: var(--card-color);
+            backdrop-filter: blur(8px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 550px;
+            text-align: center;
+            transition: background 0.4s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #aaa;
+            border-radius: 15px;
+            padding: 30px;
+            background-color: #f9fbfe;
+            transition: 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            background-color: #f0f4ff;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        .upload-box svg {
+            width: 50px;
+            height: 50px;
+            fill: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .preview {
+            margin-top: 20px;
+        }
+
+        .preview img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"] {
+            margin-top: 25px;
+            background: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: #357abd;
+        }
+
+        #loadingSpinner {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .result {
+            margin-top: 30px;
+        }
+
+        .result h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    <div class="container">
+        <h1>🐾 Cat vs Dog Classifier</h1>
+        <form method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
+            <div class="upload-box" onclick="document.getElementById('fileInput').click();">
+                <input type="file" name="image" id="fileInput" accept="image/*" required onchange="previewImage(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 16l4-5h-3V4h-2v7H8z"/><path d="M20 18H4v-2h16v2z"/>
+                </svg>
+                <p>Click or drag to upload</p>
+            </div>
+
+            <div class="preview" id="previewContainer"></div>
+
+            <input type="submit" value="Predict">
+            <div id="loadingSpinner">🔄 Predicting...</div>
+        </form>
+
+        {% if prediction %}
+        <div class="result">
+            <h2>Prediction: {{ prediction }}</h2>
+            <img src="{{ image_path }}" alt="Result Image">
+            <p>{{ tip }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+            const file = event.target.files[0];
+            if (file) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                previewContainer.appendChild(img);
+            }
+        }
+
+        function showSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+    </script>
+</body>
+</html>
